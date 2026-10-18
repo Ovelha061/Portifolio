@@ -109,7 +109,7 @@ const AppOS = (() => {
 
   // Links externos. `shell: true` também aparece no Dock e na área de trabalho.
   const LINKS = [
-    { label: 'GitHub', icon: 'github', color: 'github', cat: 'contato', keys: 'repositorios codigo', href: 'https://github.com/OvelhaNegra111', shell: true },
+    { label: 'GitHub', icon: 'github', color: 'github', cat: 'contato', keys: 'repositorios codigo', href: 'https://github.com/Ovelha061', shell: true },
     { label: 'Enviar Email', icon: 'send', cat: 'contato', keys: 'email gmail', href: 'mailto:iagomaniglia@gmail.com' },
     { label: 'WhatsApp', icon: 'message-circle', cat: 'contato', keys: 'whatsapp zap telefone celular', href: 'https://wa.me/5561996987885' }
   ];
@@ -715,12 +715,12 @@ Digite <span class="term-yellow">open projects</span> ou <span class="term-yello
 <span class="term-cyan">Canais de Comunicação:</span>
   • WhatsApp:  <a href="https://wa.me/5561996987885" target="_blank" class="term-green">(61) 99698-7885</a>
   • Email:     <a href="mailto:iagomaniglia@gmail.com" class="term-green">iagomaniglia@gmail.com</a>
-  • GitHub:    <a href="https://github.com/OvelhaNegra111" target="_blank" class="term-green">https://github.com/OvelhaNegra111</a>
+  • GitHub:    <a href="https://github.com/Ovelha061" target="_blank" class="term-green">https://github.com/Ovelha061</a>
 Digite <span class="term-yellow">open contact</span> para abrir o formulário rápido de envio!
 `,
     github: async () => {
       try {
-        const res = await fetch('https://api.github.com/users/OvelhaNegra111');
+        const res = await fetch('https://api.github.com/users/Ovelha061');
         if (!res.ok) throw new Error('Falha ao consultar API do GitHub');
         const data = await res.json();
         return `
@@ -731,7 +731,7 @@ Digite <span class="term-yellow">open contact</span> para abrir o formulário r�
   • Link: <a href="${data.html_url}" target="_blank" class="term-green">${data.html_url}</a>
 `;
       } catch (err) {
-        return `<span class="term-muted">GitHub API: Usuário @OvelhaNegra111 pronto para conexões. Visite https://github.com/OvelhaNegra111</span>`;
+        return `<span class="term-muted">GitHub API: Usuário @Ovelha061 pronto para conexões. Visite https://github.com/Ovelha061</span>`;
       }
     },
     clear: () => {
