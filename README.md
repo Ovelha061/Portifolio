@@ -46,4 +46,4 @@ Comandos disponíveis: `help`, `about`, `skills`, `projects`, `contact`, `github
 
 ## Autor
 
-Iago M. · [GitHub](https://github.com/OvelhaNegra111)
+Ovelha061 · [GitHub](https://github.com/OvelhaNegra111)
