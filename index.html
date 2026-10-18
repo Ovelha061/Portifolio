@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Iago | Portfólio Desktop OS</title>
+  
+  <!-- Meta SEO -->
+  <meta name="description" content="Portfólio interativo de desenvolvimento em formato de Sistema Operacional moderno com Glassmorphism, Terminal interativo e showcase de projetos.">
+  <meta name="author" content="Iago">
+  <meta name="theme-color" content="#0b0f17">
+
+  <!-- Fontes Google (Inter & JetBrains Mono) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Ícones Lucide -->
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Estilo Principal -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Efeito de Fundo Dinâmico / Papel de Parede -->
+  <div id="wallpaper-container" class="wallpaper-aurora">
+    <div class="mesh-glow mesh-1"></div>
+    <div class="mesh-glow mesh-2"></div>
+    <div class="mesh-glow mesh-3"></div>
+    <div class="wallpaper-overlay"></div>
+  </div>
+
+  <!-- Retângulo de Seleção da Área de Trabalho -->
+  <div id="selection-box"></div>
+
+  <!-- Menu de Contexto (Botão Direito) -->
+  <div id="context-menu" class="context-menu hidden">
+    <div class="context-item" data-action="open-projects">
+      <i data-lucide="folder-kanban"></i> Projetos
+    </div>
+    <div class="context-item" data-action="open-terminal">
+      <i data-lucide="terminal"></i> Terminal
+    </div>
+    <div class="context-item" data-action="open-about">
+      <i data-lucide="user"></i> Sobre Mim
+    </div>
+    <div class="context-item" data-action="spotlight">
+      <i data-lucide="search"></i> Buscar… (Ctrl + K)
+    </div>
+    <div class="context-divider"></div>
+    <div class="context-item" data-action="open-settings">
+      <i data-lucide="palette"></i> Trocar Papel de Parede
+    </div>
+    <div class="context-item" data-action="toggle-fullscreen">
+      <i data-lucide="maximize"></i> Alternar Tela Cheia
+    </div>
+  </div>
+
+  <!-- TOP BAR (Estilo macOS / Linux Moderno) -->
+  <header id="top-bar">
+    <div class="top-bar-left">
+      <!-- Menu do Sistema -->
+      <div class="top-nav-item active-logo" id="system-menu-btn" title="Menu do Sistema">
+        <svg class="sys-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="m10 15 5-3-5-3v6Z"></path>
+        </svg>
+      </div>
+      
+      <!-- Dropdown do Sistema -->
+      <div id="system-dropdown" class="dropdown-menu hidden">
+        <div class="dropdown-item" data-action="open-about">
+          <i data-lucide="user"></i> Sobre Mim
+        </div>
+        <div class="dropdown-item" data-action="open-settings">
+          <i data-lucide="sliders"></i> Preferências
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" data-action="restart-session">
+          <i data-lucide="rotate-ccw"></i> Reiniciar Área de Trabalho
+        </div>
+      </div>
+
+      <!-- Nome do App Ativo -->
+      <span class="active-app-name" id="focused-app-title">Portfólio OS</span>
+
+      <nav class="top-bar-menus" id="top-bar-menus"><!-- Menus por categoria gerados por app.js --></nav>
+    </div>
+
+    <div class="top-bar-right">
+      <!-- Status Badge -->
+      <div class="status-badge" title="Status: Disponível para Projetos e Oportunidades">
+        <span class="pulse-dot"></span>
+        <span class="badge-text">Disponível para Projetos / Vagas (Remoto)</span>
+      </div>
+
+      <!-- Equalizador (visível quando a música toca) -->
+      <div class="topbar-eq" id="topbar-eq" title="Tocando Synthwave"><span></span><span></span><span></span></div>
+
+      <!-- Spotlight Trigger -->
+      <button class="spotlight-trigger" id="spotlight-trigger" title="Buscar (Ctrl + K)">
+        <i data-lucide="search"></i>
+      </button>
+
+      <!-- Controle de Som -->
+      <button class="top-action-btn" id="sound-toggle-btn" title="Alternar Sons de Interface">
+        <i data-lucide="volume-2" id="sound-icon"></i>
+      </button>
+
+      <!-- Seletor Rápido de Tema -->
+      <button class="top-action-btn" id="quick-theme-btn" title="Mudar Tema / Papel de Parede">
+        <i data-lucide="sparkles"></i>
+      </button>
+
+      <!-- Relógio e Data em Tempo Real -->
+      <div class="clock-display" id="clock-display">
+        <span id="date-text">Sex 18 Out</span>
+        <span id="time-text">14:00</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ÁREA DE TRABALHO (Desktop Icons) -->
+  <main id="desktop">
+    <div class="desktop-grid" id="desktop-grid">
+      <!-- Gerado por app.js a partir do registro APPS (Arquitetura da Informação) -->
+    </div>
+
+    <!-- CONTAINER DE JANELAS FLUTUANTES -->
+    <div id="windows-container">
+
+      <!-- ==============================================
+           JANELA: PROJETOS (FINDER)
+      =============================================== -->
+      <div class="os-window glass" id="win-projects" data-window="projects">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="folder-kanban" class="win-icon-sm"></i>
+            <span>Projetos</span>
+          </div>
+          <div class="window-header-actions">
+            <span class="project-count-badge">3 Projetos</span>
+          </div>
+        </div>
+
+        <div class="window-body projects-body">
+          <!-- Barra Lateral de Categorias -->
+          <aside class="projects-sidebar">
+            <div class="sidebar-group">
+              <span class="sidebar-title">Filtros</span>
+              <button class="sidebar-btn active" data-filter="all">
+                <i data-lucide="layers"></i> Todos os Projetos
+              </button>
+              <button class="sidebar-btn" data-filter="3d">
+                <i data-lucide="box"></i> 3D & Interatividade
+              </button>
+              <button class="sidebar-btn" data-filter="backend">
+                <i data-lucide="server"></i> Python & Backend
+              </button>
+              <button class="sidebar-btn" data-filter="frontend">
+                <i data-lucide="layout"></i> Interfaces Web
+              </button>
+            </div>
+            
+            <div class="sidebar-group">
+              <span class="sidebar-title">Repositórios</span>
+              <a href="https://github.com/OvelhaNegra111?tab=repositories" target="_blank" class="sidebar-link">
+                <i data-lucide="github"></i> Ver no GitHub ↗
+              </a>
+            </div>
+          </aside>
+
+          <!-- Grid de Projetos -->
+          <div class="projects-content">
+            <div class="projects-grid">
+              
+              <!-- Card 1: CANECA+ 3D (Destaque Principal) -->
+              <article class="project-card featured" data-category="3d backend">
+                <div class="project-card-banner banner-caneca">
+                  <span class="featured-badge">⭐ Destaque</span>
+                  <div class="banner-overlay">
+                    <i data-lucide="box" class="banner-icon"></i>
+                  </div>
+                </div>
+                <div class="project-card-info">
+                  <div class="card-title-row">
+                    <h3>CANECA+ | Oficina 3D</h3>
+                    <span class="tech-tag">Fullstack 3D</span>
+                  </div>
+                  <p class="project-desc">
+                    E-commerce de personalização com prensa térmica virtual em 3D (Three.js), prévia 360°, rádio lo-fi procedural e integração completa com WhatsApp.
+                  </p>
+                  <div class="project-tags">
+                    <span>Python</span>
+                    <span>Flask</span>
+                    <span>Three.js</span>
+                    <span>GSAP</span>
+                    <span>Web Audio</span>
+                  </div>
+                  <div class="project-card-actions">
+                    <button class="btn btn-primary btn-sm" onclick="AppOS.openWindow('caneca3d')">
+                      <i data-lucide="play"></i> Ver Detalhes
+                    </button>
+                    <a href="https://site-canecas-personalizadas-1.onrender.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                      <i data-lucide="external-link"></i> Ver Site
+                    </a>
+                    <a href="https://github.com/OvelhaNegra111/Site-Canecas-Personalizadas" target="_blank" class="btn btn-secondary btn-sm">
+                      <i data-lucide="github"></i> Código
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Card 2: Desktop OS Portfolio (Este projeto) -->
+              <article class="project-card" data-category="frontend">
+                <div class="project-card-banner banner-os">
+                  <div class="banner-overlay">
+                    <i data-lucide="monitor" class="banner-icon"></i>
+                  </div>
+                </div>
+                <div class="project-card-info">
+                  <div class="card-title-row">
+                    <h3>Web OS Portfolio</h3>
+                    <span class="tech-tag">Frontend</span>
+                  </div>
+                  <p class="project-desc">
+                    Sistema operacional interativo no navegador com gerenciador de janelas flutuantes, arrasto com limites, terminal funcional, efeitos de vidro e personalização.
+                  </p>
+                  <div class="project-tags">
+                    <span>Vanilla JS</span>
+                    <span>CSS3 Glassmorphism</span>
+                    <span>Web Audio</span>
+                    <span>APIs</span>
+                  </div>
+                  <div class="project-card-actions">
+                    <button class="btn btn-primary btn-sm" onclick="AppOS.openWindow('terminal')">
+                      <i data-lucide="terminal"></i> Testar no Terminal
+                    </button>
+                    <a href="https://github.com/OvelhaNegra111" target="_blank" class="btn btn-secondary btn-sm">
+                      <i data-lucide="github"></i> Repo
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Card 3: Automação & APIs -->
+              <article class="project-card" data-category="backend">
+                <div class="project-card-banner banner-api">
+                  <div class="banner-overlay">
+                    <i data-lucide="network" class="banner-icon"></i>
+                  </div>
+                </div>
+                <div class="project-card-info">
+                  <div class="card-title-row">
+                    <h3>API Services & Integrations</h3>
+                    <span class="tech-tag">Backend</span>
+                  </div>
+                  <p class="project-desc">
+                    Serviços em Python para processamento assíncrono, integração com IA de geração visual (Cloudflare FLUX), manipulação de imagens e webhooks.
+                  </p>
+                  <div class="project-tags">
+                    <span>Python</span>
+                    <span>REST APIs</span>
+                    <span>PIL/Pillow</span>
+                    <span>Async</span>
+                  </div>
+                  <div class="project-card-actions">
+                    <a href="https://github.com/OvelhaNegra111" target="_blank" class="btn btn-secondary btn-sm">
+                      <i data-lucide="external-link"></i> Ver Repositório
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: TERMINAL (CLI INTERATIVO)
+      =============================================== -->
+      <div class="os-window glass" id="win-terminal" data-window="terminal">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="terminal" class="win-icon-sm"></i>
+            <span>Terminal</span>
+          </div>
+          <div class="window-header-actions">
+            <span class="status-indicator-green"></span>
+          </div>
+        </div>
+
+        <div class="window-body terminal-body" id="terminal-body" onclick="document.getElementById('terminal-input').focus()">
+          <div class="terminal-output" id="terminal-output">
+            <div class="terminal-banner">
+              <span class="term-cyan">┌────────────────────────────────────────────────────────┐</span><br>
+              <span class="term-cyan">│</span>  <strong class="term-green">IAGO OS v2.4.0 (x86_64-apple-darwin)</strong>                  <span class="term-cyan">│</span><br>
+              <span class="term-cyan">│</span>  Bem-vindo ao shell interativo do meu portfólio!       <span class="term-cyan">│</span><br>
+              <span class="term-cyan">│</span>  Digite <strong class="term-yellow">help</strong> para listar todos os comandos disponíveis.  <span class="term-cyan">│</span><br>
+              <span class="term-cyan">└────────────────────────────────────────────────────────┘</span>
+            </div>
+          </div>
+          
+          <div class="terminal-input-line">
+            <span class="term-prompt"><span class="prompt-user">iago</span><span class="prompt-at">@</span><span class="prompt-host">dev</span>:<span class="prompt-path">~</span>$</span>
+            <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" autofocus>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: SOBRE MIM
+      =============================================== -->
+      <div class="os-window glass" id="win-about" data-window="about">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="user" class="win-icon-sm"></i>
+            <span>Sobre Mim</span>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="window-body about-body">
+          <div class="about-hero">
+            <div class="avatar-wrapper">
+              <div class="avatar-placeholder">
+                <i data-lucide="code-2"></i>
+              </div>
+              <span class="avatar-badge">Dev</span>
+            </div>
+            <div class="about-hero-text">
+              <h2>Iago M.</h2>
+              <p class="about-headline">Desenvolvedor Fullstack com foco em Experiências 3D e Backend Python</p>
+              <div class="about-badges">
+                <span class="pill-badge"><i data-lucide="map-pin"></i> Brasil</span>
+                <span class="pill-badge"><i data-lucide="briefcase"></i> Disponível para Projetos</span>
+                <span class="pill-badge"><i data-lucide="check-circle-2"></i> Clean Code</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="about-sections">
+            <section class="about-card">
+              <h3><i data-lucide="sparkles"></i> Minha Proposta</h3>
+              <p>
+                Crio aplicações modernas que unem **alta performance no backend** a **interfaces cativantes e dinâmicas** no navegador. Acredito que a web não precisa ser monótona: animações fluidas, modelagem 3D interativa (WebGL/Three.js) e arquitetura sólida transformam visitantes em clientes satisfeitos.
+              </p>
+            </section>
+
+            <section class="about-card">
+              <h3><i data-lucide="compass"></i> Áreas de Especialidade</h3>
+              <div class="specialty-grid">
+                <div class="specialty-item">
+                  <i data-lucide="box" class="spec-icon"></i>
+                  <h4>Web 3D & Criativo</h4>
+                  <p>Three.js, simulações em tempo real, GSAP e interações imersivas.</p>
+                </div>
+                <div class="specialty-item">
+                  <i data-lucide="server" class="spec-icon"></i>
+                  <h4>Backend & Automação</h4>
+                  <p>Python, Flask, arquitetura RESTful, webhooks e manipulação de mídia.</p>
+                </div>
+                <div class="specialty-item">
+                  <i data-lucide="palette" class="spec-icon"></i>
+                  <h4>UI/UX & Design</h4>
+                  <p>Interfaces com Glassmorphism, responsividade perfeita e estética moderna.</p>
+                </div>
+              </div>
+            </section>
+
+            <div class="about-actions">
+              <button class="btn btn-primary" onclick="AppOS.openWindow('projects')">
+                <i data-lucide="folder-kanban"></i> Explorar Meus Projetos
+              </button>
+              <button class="btn btn-secondary" onclick="AppOS.openWindow('contact')">
+                <i data-lucide="send"></i> Entrar em Contato
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: HABILIDADES (SKILLS & TECH MATRIX)
+      =============================================== -->
+      <div class="os-window glass" id="win-skills" data-window="skills">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="cpu" class="win-icon-sm"></i>
+            <span>Habilidades</span>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="window-body skills-body">
+          <div class="skills-columns">
+            
+            <!-- Grupo 1: 3D & Frontend -->
+            <div class="skills-group">
+              <div class="group-header">
+                <i data-lucide="layout" class="group-icon icon-blue"></i>
+                <h3>Frontend & 3D Interativo</h3>
+              </div>
+              <div class="skill-meter">
+                <div class="meter-info">
+                  <span>Three.js / WebGL</span>
+                  <span class="meter-val">88%</span>
+                </div>
+                <div class="meter-bar"><div class="meter-fill" style="width: 88%;"></div></div>
+              </div>
+              <div class="skill-meter">
+                <div class="meter-info">
+                  <span>JavaScript Moderno (ES6+)</span>
+                  <span class="meter-val">92%</span>
+                </div>
+                <div class="meter-bar"><div class="meter-fill" style="width: 92%;"></div></div>
+              </div>
+              <div class="skill-meter">
+                <div class="meter-info">
+                  <span>CSS3 / Glassmorphism / Flex & Grid</span>
+                  <span class="meter-val">95%</span>
+                </div>
+                <div class="meter-bar"><div class="meter-fill" style="width: 95%;"></div></div>
+              </div>
+              <div class="skill-meter">
+                <div class="meter-info">
+                  <span>GSAP / Animações Fluidas</span>
+                  <span class="meter-val">85%</span>
+                </div>
+                <div class="meter-bar"><div class="meter-fill" style="width: 85%;"></div></div>
+              </div>
+            </div>
+
+            <!-- Grupo 2: Backend & Python -->
+            <div class="skills-group">
+              <div class="group-header">
+                <i data-lucide="server" class="group-icon icon-emerald"></i>
+                <h3>Backend & Integrações</h3>
+              </div>
+              <div class="skill-meter">
+                <div class="meter-info">
+                  <span>Python</span>
+                  <span class="meter-val">90%</span>
+                </div>
+                <div class="meter-bar"><div class="meter-fill" style="width: 90%;"></div></div>
+              </div>
+              <div class="skill-meter">
+                <div class="meter-info">
+                  <span>Flask & APIs REST</span>
+                  <span class="meter-val">88%</span>
+                </div>
+                <div class="meter-bar"><div class="meter-fill" style="width: 88%;"></div></div>
+              </div>
+              <div class="skill-meter">
+                <div class="meter-info">
+                  <span>Integrações (WhatsApp, IA, Cloudflare)</span>
+                  <span class="meter-val">86%</span>
+                </div>
+                <div class="meter-bar"><div class="meter-fill" style="width: 86%;"></div></div>
+              </div>
+              <div class="skill-meter">
+                <div class="meter-info">
+                  <span>Web Audio API</span>
+                  <span class="meter-val">80%</span>
+                </div>
+                <div class="meter-bar"><div class="meter-fill" style="width: 80%;"></div></div>
+              </div>
+            </div>
+
+            <!-- Grupo 3: Ferramentas & Práticas -->
+            <div class="skills-group">
+              <div class="group-header">
+                <i data-lucide="wrench" class="group-icon icon-purple"></i>
+                <h3>Engenharia & Ferramentas</h3>
+              </div>
+              <div class="tools-tags">
+                <span class="tool-badge"><i data-lucide="git-branch"></i> Git & GitHub</span>
+                <span class="tool-badge"><i data-lucide="layout"></i> Arquitetura da Informação (IA)</span>
+                <span class="tool-badge"><i data-lucide="check-circle-2"></i> Assumption Testing Matrix (ATM)</span>
+                <span class="tool-badge"><i data-lucide="terminal"></i> Bash / PowerShell</span>
+                <span class="tool-badge"><i data-lucide="monitor"></i> Responsive Design</span>
+                <span class="tool-badge"><i data-lucide="sparkles"></i> Clean Architecture</span>
+                <span class="tool-badge"><i data-lucide="box"></i> Three.js OrbitControls</span>
+                <span class="tool-badge"><i data-lucide="shield-check"></i> Performance & SEO</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: CURRÍCULO (RESUME VIEWER)
+      =============================================== -->
+      <div class="os-window glass" id="win-resume" data-window="resume">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="file-text" class="win-icon-sm"></i>
+            <span>Currículo</span>
+          </div>
+          <div class="window-header-actions">
+            <button class="btn btn-secondary btn-xs" onclick="window.print()">
+              <i data-lucide="printer"></i> Imprimir / Salvar PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="window-body resume-body">
+          <div class="resume-sheet">
+            <header class="resume-header">
+              <div>
+                <h1 class="resume-name">IAGO M.</h1>
+                <p class="resume-role">Desenvolvedor Fullstack • Especialista em Web 3D & Python</p>
+              </div>
+              <div class="resume-contacts">
+                <span><i data-lucide="mail"></i> iagomaniglia@gmail.com</span>
+                <span><i data-lucide="phone"></i> (61) 99698-7885</span>
+                <span><i data-lucide="github"></i> github.com/OvelhaNegra111</span>
+                <span><i data-lucide="globe"></i> Brasília - DF • Remoto / Híbrido</span>
+              </div>
+            </header>
+
+            <hr class="resume-divider">
+
+            <section class="resume-section">
+              <h2 class="section-title">Resumo Profissional</h2>
+              <p>
+                Desenvolvedor com sólida experiência na criação de ecossistemas web completos, combinando processamento eficiente em Python (Flask, APIs REST) com interfaces ricas e interativas utilizando Three.js, WebGL e Vanilla JavaScript. Aplica práticas modernas de <strong>Arquitetura da Informação</strong> e <strong>Assumption Testing Matrix (ATM)</strong> para mapear e mitigar riscos de projeto, garantindo produtos focados na usabilidade e valor real para o usuário.
+              </p>
+            </section>
+
+            <section class="resume-section">
+              <h2 class="section-title">Destaques de Projetos</h2>
+              
+              <div class="resume-item">
+                <div class="item-head">
+                  <strong class="item-title">CANECA+ | Oficina Virtual 3D de Sublimação</strong>
+                  <span class="item-date">2026</span>
+                </div>
+                <div class="item-subtitle">Python, Flask, Three.js, GSAP, Web Audio API</div>
+                <ul class="item-list">
+                  <li>Desenvolvimento completo de aplicação comercial com renderização 3D de canecas em tempo real.</li>
+                  <li>Simulação interativa de prensagem térmica e projeção de texturas enviadas pelo cliente.</li>
+                  <li>Geração de rádio lo-fi procedural diretamente pelo navegador via síntese de áudio.</li>
+                  <li>Integração com API de geração de imagem assistida por inteligência artificial e pedidos via WhatsApp.</li>
+                </ul>
+              </div>
+
+              <div class="resume-item">
+                <div class="item-head">
+                  <strong class="item-title">Web OS Interactive Portfolio</strong>
+                  <span class="item-date">2026</span>
+                </div>
+                <div class="item-subtitle">HTML5, CSS3 Glassmorphism, Vanilla JS, Lucide Icons</div>
+                <ul class="item-list">
+                  <li>Ambiente desktop virtual multijanela com gerenciamento de foco (z-index), arrasto livre e terminal CLI interativo.</li>
+                  <li>Paleta refinada com temas dinâmicos e arquitetura modular de alta performance.</li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="resume-section">
+              <h2 class="section-title">Formação & Competências Metodológicas</h2>
+              <div class="resume-item">
+                <div class="item-head">
+                  <strong class="item-title">Ciência da Computação / Desenvolvimento de Software</strong>
+                </div>
+                <p>Estudo contínuo em arquitetura de software, computação gráfica para web e engenharia de software centrada no usuário.</p>
+              </div>
+              <div class="resume-item">
+                <div class="item-head">
+                  <strong class="item-title">Design de Produto & Product Discovery</strong>
+                </div>
+                <ul class="item-list">
+                  <li><strong>Assumption Testing Matrix (ATM):</strong> Mapeamento, priorização e validação contínua de hipóteses e riscos com usuários antes e durante o desenvolvimento ágil.</li>
+                  <li><strong>Arquitetura da Informação (IA):</strong> Estruturação e hierarquia de fluxos de navegação, sistemas de rotulagem e redução de carga cognitiva em interfaces digitais.</li>
+                </ul>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: MÚSICA (SYNTHWAVE PROCEDURAL)
+      =============================================== -->
+      <div class="os-window glass" id="win-music" data-window="music">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="music" class="win-icon-sm"></i>
+            <span>Música</span>
+          </div>
+          <div></div>
+        </div>
+        <div class="window-body music-body">
+          <canvas id="music-viz" width="400" height="120"></canvas>
+          <div class="music-track" id="music-track">Neon Drive</div>
+          <div class="music-controls">
+            <button class="btn btn-secondary btn-sm" id="music-prev"><i data-lucide="skip-back"></i></button>
+            <button class="btn btn-primary btn-sm" id="music-play"><i data-lucide="play"></i></button>
+            <button class="btn btn-secondary btn-sm" id="music-next"><i data-lucide="skip-forward"></i></button>
+            <input type="range" id="music-volume" min="0" max="1" step="0.05" value="0.5" title="Volume">
+          </div>
+          <p class="music-hint">Música gerada em tempo real via Web Audio API — sem arquivos de áudio.</p>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: NOTAS (LOCALSTORAGE)
+      =============================================== -->
+      <div class="os-window glass" id="win-notes" data-window="notes">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="sticky-note" class="win-icon-sm"></i>
+            <span>Notas</span>
+          </div>
+          <div></div>
+        </div>
+        <div class="window-body notes-body">
+          <div class="notes-pinned">📌 Obrigado por visitar meu portfólio! Deixe um feedback ou use este bloco para anotar ideias.</div>
+          <textarea id="notes-text" placeholder="Escreva aqui..."></textarea>
+          <span class="music-hint" id="notes-status">Salvo automaticamente no navegador</span>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: SNAKE (MINI GAME RETRÔ)
+      =============================================== -->
+      <div class="os-window glass" id="win-snake" data-window="snake">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="gamepad-2" class="win-icon-sm"></i>
+            <span>Snake</span>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="window-body snake-body">
+          <div class="snake-hud">
+            <span>SCORE <b id="snake-score">0</b></span>
+            <span>RECORDE <b id="snake-best">0</b></span>
+          </div>
+          <canvas id="snake-canvas" width="400" height="400"></canvas>
+          <p class="snake-hint" id="snake-msg">Pressione ESPAÇO ou toque para jogar · Setas/WASD/deslize</p>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: CANECA+ 3D SHOWCASE (PROJETO EM DETALHES)
+      =============================================== -->
+      <div class="os-window glass" id="win-caneca3d" data-window="caneca3d">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="box" class="win-icon-sm"></i>
+            <span>Caneca+ 3D</span>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="window-body caneca-body">
+          <div class="caneca-hero">
+            <div class="caneca-badge-wrap">
+              <span class="badge-accent">Three.js + Flask</span>
+              <h2>Oficina Virtual de Sublimação 3D</h2>
+            </div>
+            <p>
+              Este é um dos meus projetos de maior destaque: uma aplicação web real onde o cliente personaliza a sua caneca, visualiza em uma prensa térmica 3D e vê o resultado final girando em 360° antes de fechar a compra.
+            </p>
+          </div>
+
+          <div class="caneca-features-grid">
+            <div class="feat-box">
+              <i data-lucide="refresh-cw"></i>
+              <h4>Prensa 3D em Tempo Real</h4>
+              <p>Aplicação da arte do cliente como textura no modelo 3D com Three.js e animação via GSAP.</p>
+            </div>
+            <div class="feat-box">
+              <i data-lucide="radio"></i>
+              <h4>Rádio Lo-Fi Sintetizada</h4>
+              <p>Música lo-fi gerada algoritmicamente no navegador com Web Audio API sem arquivos pesados de áudio.</p>
+            </div>
+            <div class="feat-box">
+              <i data-lucide="sparkles"></i>
+              <h4>Foto de Estúdio por IA</h4>
+              <p>Integração com modelos de difusão para gerar fotos realistas de estúdio do produto final.</p>
+            </div>
+            <div class="feat-box">
+              <i data-lucide="message-circle"></i>
+              <h4>Pedido Direto WhatsApp</h4>
+              <p>Geração automática da ordem de serviço com link exclusivo e código rastreável de pedido.</p>
+            </div>
+          </div>
+
+          <div class="caneca-footer-actions">
+            <a href="https://site-canecas-personalizadas-1.onrender.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+              <i data-lucide="external-link"></i> Ver Site ao Vivo
+            </a>
+            <a href="https://github.com/OvelhaNegra111/Site-Canecas-Personalizadas" target="_blank" class="btn btn-secondary">
+              <i data-lucide="github"></i> Acessar Repositório Completo
+            </a>
+            <button class="btn btn-secondary" onclick="AppOS.openWindow('projects')">
+              <i data-lucide="arrow-left"></i> Voltar aos Projetos
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: CONTATO
+      =============================================== -->
+      <div class="os-window glass" id="win-contact" data-window="contact">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="mail" class="win-icon-sm"></i>
+            <span>Contato</span>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="window-body contact-body">
+          <div class="contact-channels">
+            <div class="contact-card">
+              <i data-lucide="github" class="channel-icon icon-github"></i>
+              <h4>GitHub</h4>
+              <p>Confira meus códigos e contribuições</p>
+              <a href="https://github.com/OvelhaNegra111" target="_blank" class="channel-link">@OvelhaNegra111 ↗</a>
+            </div>
+
+            <div class="contact-card">
+              <i data-lucide="message-square" class="channel-icon icon-emerald"></i>
+              <h4>WhatsApp</h4>
+              <p>Conversa direta e rápida</p>
+              <a href="https://wa.me/5561996987885?text=Ol%C3%A1%20Iago%2C%20vi%20seu%20portf%C3%B3lio!" target="_blank" class="channel-link">(61) 99698-7885 ↗</a>
+            </div>
+
+            <div class="contact-card">
+              <i data-lucide="mail" class="channel-icon icon-blue"></i>
+              <h4>Email</h4>
+              <p>Para propostas e projetos</p>
+              <a href="mailto:iagomaniglia@gmail.com" class="channel-link">iagomaniglia@gmail.com ↗</a>
+            </div>
+          </div>
+
+          <form class="contact-form" id="contact-form" onsubmit="event.preventDefault(); AppOS.handleContactSubmit();">
+            <h3>Enviar Mensagem Rápida</h3>
+            <div class="form-group">
+              <label for="contact-name">Seu Nome / Empresa</label>
+              <input type="text" id="contact-name" placeholder="Ex: Ana Silva" required>
+            </div>
+            <div class="form-group">
+              <label for="contact-email">Seu Contato (Email ou WhatsApp)</label>
+              <input type="text" id="contact-email" placeholder="ana@email.com ou (11) 99999-9999" required>
+            </div>
+            <div class="form-group">
+              <label for="contact-msg">Mensagem</label>
+              <textarea id="contact-msg" rows="3" placeholder="Olá Iago, gostei do seu portfólio e gostaria de conversar sobre..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i data-lucide="send"></i> Disparar Mensagem
+            </button>
+            <div id="contact-feedback" class="contact-feedback hidden"></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ==============================================
+           JANELA: CONFIGURAÇÕES / APARÊNCIA
+      =============================================== -->
+      <div class="os-window glass" id="win-settings" data-window="settings">
+        <div class="window-header">
+          <div class="window-controls">
+            <button class="win-btn win-close" title="Fechar"></button>
+            <button class="win-btn win-minimize" title="Minimizar"></button>
+            <button class="win-btn win-maximize" title="Maximizar"></button>
+          </div>
+          <div class="window-title">
+            <i data-lucide="sliders" class="win-icon-sm"></i>
+            <span>Preferências</span>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="window-body settings-body">
+          <section class="settings-group">
+            <h3><i data-lucide="palette"></i> Papel de Parede</h3>
+            <div class="wallpaper-options">
+              <div class="wp-option active" data-wallpaper="aurora">
+                <div class="wp-thumb thumb-aurora"></div>
+                <span>Aurora Violeta</span>
+              </div>
+              <div class="wp-option" data-wallpaper="midnight">
+                <div class="wp-thumb thumb-midnight"></div>
+                <span>Midnight Dark</span>
+              </div>
+              <div class="wp-option" data-wallpaper="cyber">
+                <div class="wp-thumb thumb-cyber"></div>
+                <span>Cyber Cyan</span>
+              </div>
+              <div class="wp-option" data-wallpaper="minimal">
+                <div class="wp-thumb thumb-minimal"></div>
+                <span>Clean Slate</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-group">
+            <h3><i data-lucide="volume-2"></i> Efeitos Sonoros</h3>
+            <div class="setting-toggle-row">
+              <div>
+                <strong>Sons de clique na interface</strong>
+                <p class="setting-subtext">Sons táteis sutis gerados via Web Audio API.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="sound-checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </section>
+
+          <section class="settings-group">
+            <h3><i data-lucide="sparkles"></i> Efeito de Vidro (Blur)</h3>
+            <div class="setting-toggle-row">
+              <div>
+                <strong>Backdrop Blur</strong>
+                <p class="setting-subtext">Desative se seu dispositivo estiver com baixo desempenho.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="blur-checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </section>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- DOCK FLUTUANTE INFERIOR (Estilo macOS) -->
+  <footer id="dock-container">
+    <div class="dock glass" id="dock">
+      <!-- Gerado por app.js a partir do registro APPS (Arquitetura da Informação) -->
+    </div>
+  </footer>
+
+  <!-- Script Principal do Sistema Operacional -->
+  <!-- Spotlight Search (Ctrl/Cmd + K) -->
+  <div id="spotlight" class="spotlight-overlay">
+    <div class="spotlight-box glass">
+      <input id="spotlight-input" type="text" placeholder="Buscar: caneca, currículo, email, terminal..." autocomplete="off">
+      <ul id="spotlight-results"></ul>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
